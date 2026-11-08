@@ -99,6 +99,9 @@ struct ContentView: View {
         }
         .background(ThemeBackdrop(theme: theme)).foregroundStyle(ink).tint(accent)
         .background(WindowLevel(pinned: model.pinned) { [weak model] window in model?.assistantWindow = window })
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+            model.retryArrangementAfterSettings()
+        }
         .sheet(isPresented: $model.showSettings) { SettingsView(model: model) }
         .sheet(isPresented: $showWindows) { windowPicker }
         .sheet(isPresented: $showPreview) { previewSheet }

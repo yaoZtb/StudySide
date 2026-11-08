@@ -74,7 +74,8 @@ enum AnswerFormatting {
     }
 
     static func plainText(_ source: String) -> String {
-        blocks(source).map { block in
+        let document = MathFormatting.protect(source)
+        var result = blocks(document.text).map { block in
             let text = String(block.attributed.characters)
             switch block.kind {
             case .list(let marker): return marker + " " + text
@@ -82,45 +83,20 @@ enum AnswerFormatting {
             default: return text
             }
         }.joined(separator: "\n\n")
+        for formula in document.formulas {
+            result = result.replacingOccurrences(of: formula.token, with: MathFormatting.plain(formula.tex))
+        }
+        return result
     }
 }
 
 struct FormattedAnswer: View {
     let source: String
     @Environment(\.studyTheme) private var theme
+    @State private var height: CGFloat = 24
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            ForEach(AnswerFormatting.blocks(source)) { block in
-                switch block.kind {
-                case .heading(let level):
-                    Text(block.attributed)
-                        .font(.system(size: level <= 2 ? 16 : 14, weight: .semibold, design: theme.design))
-                        .padding(.top, block.id == 0 ? 0 : 3)
-                case .list(let marker):
-                    HStack(alignment: .firstTextBaseline, spacing: 8) {
-                        Text(marker).foregroundStyle(theme.accent).frame(minWidth: 12, alignment: .leading)
-                        Text(block.attributed).frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                case .quote:
-                    HStack(alignment: .top, spacing: 10) {
-                        RoundedRectangle(cornerRadius: 1).fill(theme.accent.opacity(0.35)).frame(width: 2)
-                        Text(block.attributed).foregroundStyle(theme.ink.opacity(0.8)).frame(maxWidth: .infinity, alignment: .leading)
-                    }.fixedSize(horizontal: false, vertical: true)
-                case .code:
-                    Text(block.source).font(.system(size: 12, design: .monospaced))
-                        .frame(maxWidth: .infinity, alignment: .leading).padding(10)
-                        .background(theme.ink.opacity(0.055), in: RoundedRectangle(cornerRadius: 7))
-                case .divider:
-                    Rectangle().fill(theme.border).frame(height: 1).padding(.vertical, 3)
-                case .paragraph:
-                    Text(block.attributed).frame(maxWidth: .infinity, alignment: .leading)
-                }
-            }
-        }
-        .font(.system(size: 13, design: theme.design)).lineSpacing(5)
-        .textSelection(.enabled)
-        .environment(\.openURL, OpenURLAction { url in
-            ["https", "http", "mailto"].contains(url.scheme?.lowercased() ?? "") ? .systemAction : .discarded
-        })
+        AnswerDocumentView(source: source, theme: theme, height: $height)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(height: height)
     }
 }

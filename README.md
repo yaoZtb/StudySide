@@ -24,6 +24,8 @@ After selecting a course window, StudySide tries to place the course on the left
 
 Enable **StudySide** in **System Settings → Privacy & Security → Accessibility** when requested, then click **Arrange Again**. Screen sharing alone does not grant permission to move another app's windows.
 
+If Accessibility is already enabled but StudySide still reports no authorization after an update, quit StudySide, remove its old entry from Accessibility using the minus button, and add the current app from its actual location. Reopen StudySide. Local ad hoc builds can need renewed permission after their executable changes. StudySide retries a pending arrangement when you return from Settings once access is recognized.
+
 Exit full-screen or presentation mode before arranging. Minimum window sizes and available screen space may prevent a side-by-side layout. Automatic arrangement can be disabled in the More menu.
 
 ## Appearance
@@ -41,7 +43,7 @@ The app icon has bright book pages with a transparent exterior.
 - **Export Study Notes:** Save a plain-text file without screenshots.
 - **New Conversation:** Clear the current conversation.
 
-Titles, bold text, lists and code blocks are formatted in answers. Meaningful symbols in code and equations are preserved. Equation typesetting is not yet implemented.
+Answers support headings, bold text, lists, code, and LaTeX equations (inline and display). Equations render offline using the bundled KaTeX library; no remote rendering service is used. Select any part of an answer across paragraphs, lists, and equations, then press Command+C. Copying a formula produces a readable text representation; unsupported TeX uses a text fallback. The Copy Answer button and note exports also produce readable plain text.
 
 ## Data and settings
 
@@ -55,6 +57,6 @@ Existing course documents, previous messages, window titles and macOS-owned perm
 
 ## Build
 
-The source contains no third-party Swift dependencies. With Apple Command Line Tools installed, run **build.command** to create **StudySide.app** and **StudySide-Mac.zip** next to the source folder. Run **check.command** for the automated checks.
+The source contains no third-party Swift dependencies. The answer renderer uses macOS WebKit and bundles KaTeX 0.19.1, its fonts, and its MIT license in `Assets/AnswerRenderer`. No npm installation is needed to build. With Apple Command Line Tools installed, run **build.command** to create **StudySide.app** and **StudySide-Mac.zip** next to the source folder. Run **check.command** for the automated checks.
 
 Apple silicon Mac, macOS 14 or later. Automatic target detection from the system picker requires macOS 15.2 or later; earlier versions can use the window list.

@@ -1,0 +1,26 @@
+:root { --ink: #242630; --accent: #34363d; }
+html,body { margin: 0; padding: 0; background: transparent; overflow: hidden; }
+body { color: var(--ink); font: 13px/1.65 -apple-system, BlinkMacSystemFont, sans-serif; overflow-wrap: anywhere; -webkit-user-select: text; user-select: text; }
+#answer { display: flow-root; padding: 1px 0 2px; }
+p { margin: 0 0 10px; white-space: pre-wrap; }
+h1,h2,h3,h4,h5,h6 { margin: 13px 0 8px; line-height: 1.4; font-size: 14px; font-weight: 600; }
+h1,h2 { font-size: 16px; }
+#answer > :first-child { margin-top: 0; }
+#answer > :last-child { margin-bottom: 0; }
+.list-item { display: flex; gap: 8px; margin: 4px 0; }
+.list-item > :last-child { min-width: 0; white-space: pre-wrap; }
+.marker { color: var(--accent); min-width: 14px; }
+blockquote { margin: 10px 0; border-left: 2px solid var(--accent); padding: 0 0 0 10px; opacity: .85; white-space: pre-wrap; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; padding: 10px; border-radius: 7px; background: color-mix(in srgb, var(--ink) 6%, transparent); margin: 10px 0; }
+code { font: 12px/1.6 ui-monospace, Menlo, monospace; }
+p code { padding: 1px 3px; border-radius: 3px; background: color-mix(in srgb, var(--ink) 6%, transparent); }
+hr { border: 0; border-top: 1px solid color-mix(in srgb, var(--ink) 12%, transparent); margin: 12px 0; }
+a { color: var(--accent); }
+.math { -webkit-user-select: all; user-select: all; }
+.math[data-display="true"] { display: block; margin: 10px 0; white-space: normal; }
+.katex { font-size: 1.12em; }
+.katex-display { margin: 0; text-align: left; overflow-x: auto; overflow-y: hidden; padding: 3px 0 5px; }
+.katex-display > .katex { text-align: left; }
+.katex-mathml { -webkit-user-select: none; user-select: none; }
+.math-error { font-family: ui-monospace, Menlo, monospace; }
+::selection { background: color-mix(in srgb, var(--accent) 28%, transparent); }

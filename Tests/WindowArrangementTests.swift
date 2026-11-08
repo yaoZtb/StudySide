@@ -20,6 +20,13 @@ import AppKit
         for small in [CGRect(x:0,y:0,width:800,height:900), CGRect(x:0,y:0,width:1440,height:600)] {
             do { _ = try WindowArrangement.frames(in: small); fatalError("Too-small screen accepted") } catch {}
         }
+        if case .windowAccess(.cannotComplete) = WindowArrangement.windowAccessFailure(.cannotComplete, isTrusted: true) {} else {
+            fatalError("A course app failure must not be reported as missing permission")
+        }
+        if case .permissionRequired = WindowArrangement.windowAccessFailure(.apiDisabled, isTrusted: false) {} else {
+            fatalError("An unauthorized process must offer permission recovery")
+        }
+        precondition(WindowArrangement.Failure.permissionRequired.localizedDescription.contains("turn it off and on"))
         print("PASS: side-by-side geometry, no overlap, visible bounds, multiple monitor coordinates, insufficient space")
     }
 }

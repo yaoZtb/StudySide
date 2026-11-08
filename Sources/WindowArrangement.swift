@@ -9,6 +9,24 @@ struct SharedWindowTarget {
 }
 
 enum WindowArrangement {
+    enum Failure: LocalizedError {
+        case permissionRequired
+        case windowAccess(AXError)
+
+        var errorDescription: String? {
+            switch self {
+            case .permissionRequired:
+                return "macOS has not authorized this copy of StudySide. If its Accessibility switch is already on, turn it off and on again. If that does not help, remove the old entry with the minus button and add the StudySide app you are currently running. Then quit and reopen StudySide. Screen sharing is already selected."
+            case .windowAccess(let code):
+                return "Accessibility is enabled, but the course app did not provide its windows (error \(code.rawValue)). Keep the course app open, exit full screen or presentation mode, and select its window again."
+            }
+        }
+    }
+
+    static func windowAccessFailure(_ code: AXError, isTrusted: Bool) -> Failure {
+        isTrusted ? .windowAccess(code) : .permissionRequired
+    }
+
     struct Frames {
         let course: CGRect
         let assistant: CGRect
@@ -61,8 +79,10 @@ enum WindowArrangement {
     private static func matchingWindow(_ target: SharedWindowTarget) throws -> AXUIElement {
         let application = AXUIElementCreateApplication(target.processID)
         AXUIElementSetMessagingTimeout(application, 2)
-        guard let windows = value(application, kAXWindowsAttribute) as? [AXUIElement] else {
-            throw AppError.message("Could not access the course window. Enable Accessibility access and keep the window open.")
+        var result: CFTypeRef?
+        let code = AXUIElementCopyAttributeValue(application, kAXWindowsAttribute as CFString, &result)
+        guard code == .success, let windows = result as? [AXUIElement] else {
+            throw windowAccessFailure(code, isTrusted: trusted(prompt: false))
         }
         let titled = target.title.isEmpty ? [] : windows.filter { value($0, kAXTitleAttribute) as? String == target.title }
         if titled.count == 1 { return titled[0] }
@@ -92,7 +112,7 @@ enum WindowArrangement {
 
     @MainActor static func arrange(target: SharedWindowTarget, assistant: NSWindow) async throws {
         guard trusted(prompt: true) else {
-            throw AppError.message("Automatic arrangement needs Accessibility access. Allow StudySide in System Settings, then click Arrange Again. Your shared window is already selected.")
+            throw Failure.permissionRequired
         }
         guard !assistant.styleMask.contains(.fullScreen) else {
             throw AppError.message("Exit StudySide's full-screen mode, then click Arrange Again.")

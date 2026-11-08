@@ -177,7 +177,13 @@ enum KeyStore {
     weak var assistantWindow: NSWindow?
     private var sharedTarget: SharedWindowTarget?
     private var arrangementTask: Task<Void, Never>?
-    var arrangementNeedsPermission: Bool { !WindowArrangement.trusted(prompt: false) }
+    @Published private(set) var arrangementNeedsPermission = false
+
+    func retryArrangementAfterSettings() {
+        guard arrangementNeedsPermission, !arrangingWindows,
+              WindowArrangement.trusted(prompt: false) else { return }
+        arrangeWindows()
+    }
 
     func arrangeWindows() {
         let previousArrangement = arrangementTask
@@ -192,6 +198,7 @@ enum KeyStore {
         }
         arrangingWindows = true
         arrangementNotice = nil
+        arrangementNeedsPermission = false
         arrangementTask = Task {
             await previousArrangement?.value
             guard !Task.isCancelled else { return }
@@ -203,6 +210,9 @@ enum KeyStore {
             } catch {
                 guard !Task.isCancelled else { return }
                 arrangementNotice = error.localizedDescription
+                if case WindowArrangement.Failure.permissionRequired = error {
+                    arrangementNeedsPermission = true
+                }
                 arrangingWindows = false
             }
         }
@@ -212,6 +222,7 @@ enum KeyStore {
         arrangementTask?.cancel()
         arrangingWindows = false
         arrangementNotice = nil
+        arrangementNeedsPermission = false
         sharedTarget = source.flatMap { source in
             guard let pid = source.owningApplication?.processID else { return nil }
             return SharedWindowTarget(processID: pid, title: source.title ?? "", frame: source.frame)
