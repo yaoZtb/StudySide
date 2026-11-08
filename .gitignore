@@ -14,3 +14,8 @@ DerivedData/
 !.env.example
 *.key
 *.pem
+
+*.p12
+*.pfx
+*.keychain
+*.keychain-db

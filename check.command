@@ -19,3 +19,5 @@ swiftc -parse-as-library -D PREVIEW -module-cache-path "$check_dir/cache" Source
 
 swiftc -parse-as-library -module-cache-path "$check_dir/cache" Sources/Core.swift Sources/WindowArrangement.swift Tests/WindowArrangementTests.swift -o "$check_dir/arrangement-checks"
 "$check_dir/arrangement-checks"
+
+python3 Tests/SigningIdentityTests.py

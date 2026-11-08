@@ -16,7 +16,7 @@ enum WindowArrangement {
         var errorDescription: String? {
             switch self {
             case .permissionRequired:
-                return "macOS has not authorized this copy of StudySide. If its Accessibility switch is already on, turn it off and on again. If that does not help, remove the old entry with the minus button and add the StudySide app you are currently running. Then quit and reopen StudySide. Screen sharing is already selected."
+                return "macOS has not authorized this copy of StudySide. If its Accessibility switch is already on, turn it off and on again. If that does not help, remove the old entry with the minus button and add the StudySide app you are currently running. Then quit and reopen StudySide. This one-time migration is needed when upgrading from an older temporary signature; future builds signed with the same certificate retain the app identity. Screen sharing is already selected."
             case .windowAccess(let code):
                 return "Accessibility is enabled, but the course app did not provide its windows (error \(code.rawValue)). Keep the course app open, exit full screen or presentation mode, and select its window again."
             }
