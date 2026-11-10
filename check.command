@@ -21,3 +21,6 @@ swiftc -parse-as-library -module-cache-path "$check_dir/cache" Sources/Core.swif
 "$check_dir/arrangement-checks"
 
 python3 Tests/SigningIdentityTests.py
+
+swiftc -parse-as-library -D PREVIEW -module-cache-path "$check_dir/cache" Sources/*.swift Tests/AnswerScrollingTests.swift -o "$check_dir/scroll-checks" -framework SwiftUI -framework ScreenCaptureKit -framework Security -framework WebKit
+"$check_dir/scroll-checks"

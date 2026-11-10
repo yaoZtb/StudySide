@@ -43,7 +43,7 @@ The app icon has bright book pages with a transparent exterior.
 - **Export Study Notes:** Save a plain-text file without screenshots.
 - **New Conversation:** Clear the current conversation.
 
-Answers support headings, bold text, lists, code, and LaTeX equations (inline and display). Equations render offline using the bundled KaTeX library; no remote rendering service is used. Select any part of an answer across paragraphs, lists, and equations, then press Command+C. Copying a formula produces a readable text representation; unsupported TeX uses a text fallback. The Copy Answer button and note exports also produce readable plain text.
+Answers support headings, bold text, lists, code, and LaTeX equations (inline and display). Equations render offline using the bundled KaTeX library; no remote rendering service is used. Select any part of an answer across paragraphs, lists, and equations, then press Command+C. Scroll over answer text with a mouse wheel or trackpad to move through the conversation. Page Up, Page Down, Home, End, and the arrow keys also scroll the chat when an answer has focus; horizontal gestures remain available for wide formulas. Copying a formula produces a readable text representation; unsupported TeX uses a text fallback. The Copy Answer button and note exports also produce readable plain text.
 
 ## Data and settings
 

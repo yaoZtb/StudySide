@@ -60,3 +60,21 @@ document.addEventListener('copy', event => {
   }
 });
 new ResizeObserver(reportHeight).observe(answer);
+
+// This document is full-height inside the native chat scroller. WebKit otherwise
+// consumes wheel events even when its own document has no vertical scroll range.
+document.addEventListener('wheel', event => {
+  const bridge = window.webkit?.messageHandlers?.answerScroll;
+  if (!bridge || event.ctrlKey || event.shiftKey || Math.abs(event.deltaX) > Math.abs(event.deltaY) || event.deltaY === 0) return;
+  event.preventDefault();
+  bridge.postMessage({action: 'wheel', delta: event.deltaY, mode: event.deltaMode});
+}, {passive: false});
+document.addEventListener('keydown', event => {
+  if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.altKey || event.target.closest?.('input,textarea,[contenteditable=true]')) return;
+  const action = {PageDown: 'pageDown', PageUp: 'pageUp', Home: 'home', End: 'end',
+    ' ': event.shiftKey ? 'pageUp' : 'pageDown', ArrowDown: 'wheel', ArrowUp: 'wheel'}[event.key];
+  const bridge = window.webkit?.messageHandlers?.answerScroll;
+  if (!action || !bridge) return;
+  event.preventDefault();
+  bridge.postMessage({action, delta: event.key === 'ArrowUp' ? -40 : 40, mode: 0});
+});
